@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ApiService } from './api.service'
+import { ApiService } from './api.service';
 
 @Component({
-  selector: 'messages',
+  selector: 'app-messages',
   template: `
         <div *ngFor="let message of apiService.messages">
             <mat-card>{{message.title}}</mat-card>
