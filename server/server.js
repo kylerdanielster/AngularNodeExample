@@ -2,21 +2,39 @@ var express = require('express')
 var cors = require('cors')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
+var jwt = require('jwt-simple')
 
 var app = express()
 
 var User = require('./models/User.js')
+var Post = require('./models/Post.js')
 var auth = require('./auth.js')
 
 mongoose.Promise = Promise
 
-var posts = require('./posts.json')
-
 app.use(cors())
 app.use(bodyParser.json())
 
-app.get('/posts', (req, res) => {
+app.get('/posts/:id', async (req, res) => {
+    var author = req.params.id
+    var posts = await Post.find({author})
     res.send(posts)
+})
+
+app.post('/post', auth.checkAuthenticated, (req, res) => {
+    var postData = req.body
+    postData.author = req.userId
+
+    var post = new Post(postData)
+
+    post.save((err, result) => {
+        if(err) {
+            console.error('error saving post')
+            return res.status(500).send({message: 'Saving post error'})
+        }
+        
+        res.status(200).send({message: 'OK'});
+    })
 })
 
 app.get('/users', async (req, res) => {
@@ -39,14 +57,13 @@ app.get('/profile/:id', async (req, res) => {
     }
 })
 
-app.post('/register', auth.register)
-
-app.post('/login', auth.login)
 
 mongoose.connect('mongodb://test:1234@ds237389.mlab.com:37389/ps-mean-db', (err) => {
     if(!err)
         console.log('connected to mongo')
 })
+
+app.use('/auth', auth.router)
 
 console.log('listenting on port 3000....')
 app.listen(3000)

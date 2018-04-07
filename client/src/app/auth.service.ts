@@ -1,22 +1,40 @@
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class AuthService {
-    messages = [];
+    TOKEN_KEY = 'token';
 
-    constructor(private http: Http) {}
+    messages = [];
+    path = 'http://localhost:3000/auth/';
+
+    constructor(private http: HttpClient) {}
+
+    get token() {
+        return localStorage.getItem(this.TOKEN_KEY);
+    }
+
+    get isAuthenticated() {
+        return !!localStorage.getItem(this.TOKEN_KEY);
+    }
+
+    logout() {
+        localStorage.removeItem(this.TOKEN_KEY);
+    }
 
     registerUser(registrationData) {
-        this.http.post('http://localhost:3000/register', registrationData).subscribe(res => {
-
+        this.http.post<any>(this.path + 'register', registrationData).subscribe(res => {
+            this.saveToken(res.token);
         });
     }
 
     loginUser(loginData) {
-        this.http.post('http://localhost:3000/login', loginData).subscribe(res => {
-            console.log(res);
-            localStorage.setItem('token', res.json().token);
+        this.http.post<any>(this.path + 'login', loginData).subscribe(res => {
+            this.saveToken(res.token);
         });
+    }
+
+    saveToken(token) {
+        localStorage.setItem(this.TOKEN_KEY, token);
     }
 }

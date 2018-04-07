@@ -1,26 +1,33 @@
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class ApiService {
     messages = [];
     users = [];
+    path = 'http://localhost:3000/';
 
-    constructor(private http: Http) {}
+    constructor(private http: HttpClient) {}
 
-    getMessages() {
-        this.http.get('http://localhost:3000/posts').subscribe(res => {
-            this.messages = res.json();
+    getMessages(userId) {
+        this.http.get<any>(this.path + 'posts/' + userId).subscribe(res => {
+            this.messages = res;
+        });
+    }
+
+    postMessage(message) {
+        this.http.post(this.path + 'post', message).subscribe(res => {
+
         });
     }
 
     getUsers() {
-        this.http.get('http://localhost:3000/users').subscribe(res => {
-            this.users = res.json();
+        this.http.get<any>(this.path + 'users').subscribe(res => {
+            this.users = res;
         });
     }
 
     getProfile(id) {
-        return this.http.get('http://localhost:3000/profile/' + id);
+        return this.http.get(this.path + 'profile/' + id);
     }
 }
