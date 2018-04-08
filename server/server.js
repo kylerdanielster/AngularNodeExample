@@ -65,5 +65,5 @@ mongoose.connect('mongodb://test:1234@ds237389.mlab.com:37389/ps-mean-db', (err)
 
 app.use('/auth', auth.router)
 
-console.log('listenting on port 3000....')
-app.listen(3000)
+app.listen(process.env.PORT || 3000)
+console.log('listenting')
