@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
 export class ApiService {
     messages = [];
     users = [];
-    path = environment.path ;
+    path = environment.path;
 
     constructor(private http: HttpClient) {}
 
