@@ -3,6 +3,8 @@ var bcrypt = require('bcrypt-nodejs')
 var jwt = require('jwt-simple')
 var express = require('express')
 var router = express.Router()
+require('dotenv').config()
+
 
 router.post('/register', (req, res) => {
     var userData = req.body
@@ -36,7 +38,7 @@ router.post('/login', async (req, res) => {
 function createSendToken(res, user) {
     var payload = { sub: user._id }
 
-    var token = jwt.encode(payload, '123')
+    var token = jwt.encode(payload, process.env.SECRET_KEY)
 
     res.status(200).send({token})
 }
@@ -49,7 +51,7 @@ var auth = {
     
         var token = req.header('authorization').split(' ')[1]
         
-        var payload = jwt.decode(token, '123')
+        var payload = jwt.decode(token, process.env.SECRET_KEY)
     
         if(!payload)
             return res.status(401).send({message: 'Unauthorized. Auth Header Invalid.'})

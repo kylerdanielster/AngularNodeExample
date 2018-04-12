@@ -3,6 +3,7 @@ var cors = require('cors')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
 var jwt = require('jwt-simple')
+require('dotenv').config()
 
 var app = express()
 
@@ -57,8 +58,7 @@ app.get('/profile/:id', async (req, res) => {
     }
 })
 
-
-mongoose.connect('mongodb://test:1234@ds237389.mlab.com:37389/ps-mean-db', (err) => {
+mongoose.connect(process.env.DB_CONN, (err) => {
     if(!err)
         console.log('connected to mongo')
 })
